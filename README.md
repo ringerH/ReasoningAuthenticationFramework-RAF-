@@ -36,7 +36,7 @@ python benchmark.py --levels 10 --problems-per-level 3
 **Llama 3 8B Instruct** exhibits pattern matching behavior:
 - Sharp accuracy cliff at Level 3-4 (100% → 0%)
 - CDS: 0.83-0.90
-
+- Logs have not been incuded due to size concerns(verbosity) during git push
 ---
 **Institution:** IIIT-G 
 **Author:** Hillol P. Kalita  
