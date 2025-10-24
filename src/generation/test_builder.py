@@ -2,32 +2,22 @@ import json
 import os
 import sys
 
-# --- Path Fix ---
-# Add the project's root directory to the Python path
-# This is needed to find 'src' when running this script
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-# --- End Path Fix ---
 
-# --- Corrected Imports ---
-# Import the function to get the logger and timestamp
+
 from src.monitoring.logger import get_logger, get_run_timestamp
 from src.generation.problem_generator import generate_problem
-# --- End Corrected Imports ---
 
-# --- Get the logger instance ---
+
 logger = get_logger()
-# --- End Get logger ---
 
 from datetime import datetime
 
-# --- Configuration ---
 MIN_DEPTH = 0
 MAX_DEPTH = 10
 PROBLEMS_PER_DEPTH = 3
 OUTPUT_DIR = "data/test_sets"
 
-# --- Get timestamp FROM logger and define OUTPUT_FILE ---
-# Get the timestamp that the logger was initialized with (or generated)
 run_timestamp = get_run_timestamp()
 if run_timestamp is None:
     # Fallback just in case, though get_logger() should ensure it's set
@@ -35,15 +25,12 @@ if run_timestamp is None:
     run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, f"stratified_benchmark_{run_timestamp}.jsonl")
-# --- End Timestamp Handling ---
+
 
 def build_test_set():
-    """
-    Generates the complete test set and saves it to a .jsonl file.
-    """
+
     logger.info("--- [Test Set Builder Started] ---")
 
-    # Ensure the output directory exists
     try:
         os.makedirs(OUTPUT_DIR, exist_ok=True)
     except OSError as e:

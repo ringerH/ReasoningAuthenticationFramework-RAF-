@@ -1,54 +1,29 @@
-"""
-Provides a ResultTracker to log structured experiment results to a file.
-
-This module is designed to be "crash-proof" by opening and appending
-to the results file for every entry.
-
-To use in main.py:
-1. from src.monitoring.tracker import ResultTracker
-2. tracker = ResultTracker("data/results/run_1.jsonl")
-3. tracker.log_result(...)
-"""
-
 import json
 import os
 import sys
 from typing import Optional
 
-# --- Path Fix ---
-# Add the project's root directory to the Python path to find 'src'
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-# --- End Path Fix ---
 
-# The tracker logs its own actions (like "File open failed")
-# to the central logger.
+
 try:
     from src.monitoring.logger import logger
 except ImportError:
-    # Fallback in case logger isn't available or running standalone
+   
     import logging
     logger = logging.getLogger(__name__)
 
 
 class ResultTracker:
-    """
-    A class to handle logging of structured results to a JSONL file.
-    """
+  
     
     def __init__(self, filepath: str):
-        """
-        Initializes the tracker with a target file path.
-
-        Args:
-            filepath: The path to the .jsonl file to write results to.
-        """
+       
         self.filepath = filepath
         self._prepare_directory()
 
     def _prepare_directory(self):
-        """
-        Ensures the output directory exists and the file is writable.
-        """
+       
         directory = os.path.dirname(self.filepath)
         try:
             os.makedirs(directory, exist_ok=True)
@@ -68,9 +43,7 @@ class ResultTracker:
         model_answer: Optional[float], 
         is_correct: bool
     ):
-        """
-        Appends a single problem's result to the JSONL file.
-        """
+        
         result_entry = {
             "level": level,
             "problem": problem,
@@ -80,8 +53,7 @@ class ResultTracker:
         }
         
         try:
-            # Open in 'a' (append) mode, write one line, and close.
-            # This is robust to crashes.
+           
             with open(self.filepath, 'a', encoding='utf-8') as f:
                 f.write(json.dumps(result_entry) + "\n")
         except IOError as e:
@@ -90,16 +62,12 @@ class ResultTracker:
 
 # --- Self-Test Block ---
 if __name__ == "__main__":
-    """
-    Run a simple test of the ResultTracker.
-    
-    To run: python src/monitoring/tracker.py
-    """
+   
     logger.info("--- [ResultTracker Self-Test] ---")
     
     TEST_FILE = "data/results/tracker_selftest.jsonl"
     
-    # Clean up old test file if it exists
+    
     if os.path.exists(TEST_FILE):
         try:
             os.remove(TEST_FILE)

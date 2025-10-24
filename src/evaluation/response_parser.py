@@ -2,11 +2,7 @@ import re
 from typing import Optional
 
 def parse_response(raw_text: str) -> Optional[float]:
-    """
-    Extracts the last numerical value from a string.
-    
-    Assumes the final answer is the last number in the response.
-    """
+   
     if not raw_text:
         return None
 
@@ -27,9 +23,7 @@ def parse_response(raw_text: str) -> Optional[float]:
 
 # --- Self-Test Block ---
 if __name__ == "__main__":
-    """
-    Run a simple test to demonstrate the module's functionality.
-    """
+   
     
     print("Response Parser Self-Test")
     

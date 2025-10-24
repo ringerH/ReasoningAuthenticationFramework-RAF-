@@ -14,7 +14,6 @@ OPERAND_MAX = 10
 
 
 def _get_random_operand() -> int:
-    """Returns a random integer from the defined range."""
     return random.randint(OPERAND_MIN, OPERAND_MAX)
 
 
@@ -31,9 +30,7 @@ def _build_expression(
     left = _build_expression(current_depth + 1, max_depth)
     right = _build_expression(current_depth + 1, max_depth)
 
-    # --- Robustness Check ---
-    # Ensure no division by zero.
-    # We must evaluate the 'right' branch *if* it's a tuple.
+   
     if op_str == "/":
         right_val = _evaluate_expression(right)
         
@@ -46,15 +43,7 @@ def _build_expression(
 
 
 def _format_expression_str(expression: Union[int, tuple]) -> str:
-    """
-    Recursively formats the nested tuple into a human-readable string.
-    
-    e.g., ((5, <built-in function add>, 3), <built-in function mul>, 4)
-    becomes "((5 + 3) * 4)"
-    
-    Note: This function adds parentheses around every operation to ensure
-    the order of operations is unambiguous for the LLM.
-    """
+
     # Base case: It's just a number
     if isinstance(expression, int):
         return str(expression)
@@ -72,12 +61,7 @@ def _format_expression_str(expression: Union[int, tuple]) -> str:
 
 
 def _evaluate_expression(expression: Union[int, tuple]) -> float:
-    """
-    Recursively evaluates the nested tuple to get the correct answer.
-    
-    e.g., ((5, <built-in function add>, 3), <built-in function mul>, 4)
-    evaluates to 32.0
-    """
+
     # Base case: It's just a number
     if isinstance(expression, int):
         return float(expression)
@@ -94,22 +78,7 @@ def _evaluate_expression(expression: Union[int, tuple]) -> float:
 # --- Public API Function ---
 
 def generate_problem(depth: int) -> Tuple[str, float]:
-    """
-    Generates a single arithmetic problem for the complexity ladder.
-
-    This is the main public-facing function for this module.
-
-    Args:
-        depth: The compositional depth of the expression.
-               depth=0 -> "5"
-               depth=1 -> "(2 + 3)"
-               depth=2 -> "((4 * 1) + 5)"
-
-    Returns:
-        A tuple containing:
-        1. The problem as a string (e.g., "((7 - 2) * 3)").
-        2. The correct answer as a float (e.g., 15.0).
-    """
+   
     if depth < 0:
         raise ValueError("Depth cannot be negative")
 
@@ -134,12 +103,6 @@ def generate_problem(depth: int) -> Tuple[str, float]:
 # --- Self-Test Block ---
 
 if __name__ == "__main__":
-    """
-    Run a simple test to demonstrate the module's functionality.
-    This allows the script to be run directly for verification.
-    
-    To run: python src/generation/problem_generator.py
-    """
     
     print("--- Problem Generator Self-Test ---")
     

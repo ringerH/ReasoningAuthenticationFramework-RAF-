@@ -4,15 +4,11 @@ from dotenv import load_dotenv
 from typing import Optional, Dict, Any
 import sys
 
-# --- Path Fix ---
-# Add the project's root directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-# --- End Path Fix ---
 
-# --- Corrected Logger Import ---
 from src.monitoring.logger import get_logger # Import the function
 logger = get_logger() # Get the logger instance
-# --- End Corrected Logger Import ---
+
 
 MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct" 
 API_URL = "https://router.huggingface.co/v1/chat/completions"
@@ -70,10 +66,9 @@ def query_model(prompt: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-# Self-Test Block (Remains unchanged for isolated testing if needed)
 if __name__ == "__main__":
 
-    # Ensure the parser can be found relative to this script's location for self-test
+    
     try:
         from src.evaluation.response_parser import parse_response
     except ImportError:
