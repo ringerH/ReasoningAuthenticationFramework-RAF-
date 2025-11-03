@@ -2,11 +2,11 @@
 
 ## Stratified Complexity Benchmark
 
-A diagnostic tool part of a larger evaluation framework to test whether language models perform genuine compositional reasoning or rely on pattern matching.
+An evaluation framework to assess whether language models use genuine compositional reasoning or rely on pattern matching.
 
 ## How It Works
 
-The benchmark generates arithmetic problems with increasing nested complexity (Level 0 to Level 10) and measures how model accuracy degrades:
+The benchmark generates arithmetic problems with increasing nested complexity (Level 0 to Level N) and measures how model accuracy degrades:
 
 - **Reasoning models** → Smooth, gradual performance decay
 - **Pattern-matching models** → Sudden accuracy collapse (cliff)
@@ -22,14 +22,6 @@ The pipeline generates stratified problems, queries the model via API, parses re
 <img src="sys_design/seq_d.png" alt="Sequence Diagram" width="65%">
 
 End-to-end flow from benchmark generation through evaluation and analysis.
-
-## Quick Start
-
-```bash
-pip install -r requirements.txt
-export HF_TOKEN="your_token_here"
-python benchmark.py --levels 10 --problems-per-level 3
-```
 
 ## Results
 
