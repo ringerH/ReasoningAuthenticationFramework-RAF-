@@ -41,7 +41,8 @@ class ResultTracker:
         problem: str, 
         ground_truth: float, 
         model_answer: Optional[float], 
-        is_correct: bool
+        is_correct: bool,
+        raw_response: Optional[str] = None  # <--- 1. ADD THIS ARGUMENT
     ):
         
         result_entry = {
@@ -49,7 +50,8 @@ class ResultTracker:
             "problem": problem,
             "ground_truth": ground_truth,
             "model_answer": model_answer,
-            "is_correct": is_correct
+            "is_correct": is_correct,
+            "raw_response": raw_response  # <--- 2. ADD THIS LINE
         }
         
         try:
@@ -79,11 +81,11 @@ if __name__ == "__main__":
         # 1. Initialize tracker
         tracker = ResultTracker(TEST_FILE)
         
-        # 2. Log 3 test results
+        # 2. Log 3 test results (Updated to include raw_response)
         logger.info("Logging 3 test results...")
-        tracker.log_result(level=0, problem="1 + 1", ground_truth=2.0, model_answer=2.0, is_correct=True)
-        tracker.log_result(level=1, problem="(2 * 3)", ground_truth=6.0, model_answer=5.0, is_correct=False)
-        tracker.log_result(level=1, problem="(5 - 1)", ground_truth=4.0, model_answer=None, is_correct=False)
+        tracker.log_result(level=0, problem="1 + 1", ground_truth=2.0, model_answer=2.0, is_correct=True, raw_response="The answer is 2.0")
+        tracker.log_result(level=1, problem="(2 * 3)", ground_truth=6.0, model_answer=5.0, is_correct=False, raw_response="I think it is 5")
+        tracker.log_result(level=1, problem="(5 - 1)", ground_truth=4.0, model_answer=None, is_correct=False, raw_response="I am not sure.")
         
         logger.info(f"Self-test complete. Please check the file: {TEST_FILE}")
         
@@ -93,6 +95,12 @@ if __name__ == "__main__":
             
         if len(lines) == 3:
             logger.info(f"Verified {len(lines)} lines written to file. PASS.")
+            # Check content
+            first_line_data = json.loads(lines[0])
+            if "raw_response" in first_line_data:
+                logger.info("Verified 'raw_response' field exists. PASS.")
+            else:
+                logger.error("Verification failed! 'raw_response' field missing. FAIL.")
         else:
             logger.error(f"Verification failed! Expected 3 lines, found {len(lines)}. FAIL.")
 

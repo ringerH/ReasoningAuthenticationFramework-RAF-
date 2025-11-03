@@ -15,7 +15,7 @@ from datetime import datetime
 
 MIN_DEPTH = 0
 MAX_DEPTH = 10
-PROBLEMS_PER_DEPTH = 3
+PROBLEMS_PER_DEPTH = 5
 OUTPUT_DIR = "data/test_sets"
 
 run_timestamp = get_run_timestamp()
