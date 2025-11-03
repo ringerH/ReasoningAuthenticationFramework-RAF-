@@ -19,7 +19,7 @@ The benchmark generates arithmetic problems with increasing nested complexity (L
 The pipeline generates stratified problems, queries the model via API, parses responses, and calculates the Compositional Decay Score (CDS).
 
 ### Sequence Flow
-![Sequence Diagram](sys_design/seq_d.png)
+<img src="sys_design/seq_d.png" alt="Sequence Diagram" width="65%">
 
 End-to-end flow from benchmark generation through evaluation and analysis.
 
@@ -55,6 +55,8 @@ Level 5:  10.00%  (2/20)   ← 45% drop
 
 CDS: 0.9000
 ```
+[All Benchmark Results](https://github.com/ringerh/ReasoningAuthenticationFramework-RAF-/releases)
+
 
 **Key Finding:** Model exhibits limited compositional capability that degrades gracefully through L3, then collapses at L4-L5. Suggests working memory constraints rather than pure pattern matching.
 
