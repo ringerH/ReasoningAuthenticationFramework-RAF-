@@ -17,12 +17,13 @@ def _get_random_operand() -> int:
     return random.randint(OPERAND_MIN, OPERAND_MAX)
 
 
-def _build_expression(
-    current_depth: int, max_depth: int
-) -> Union[int, tuple]:
-    
-    
-    if current_depth == max_depth:
+def _build_expression(current_depth: int, max_depth: int) -> Union[int, tuple]:
+    """
+    Recursively builds an expression tree.
+    - If we've reached max_depth, return a leaf (number)
+    - Otherwise, create a binary operation with two sub-expressions
+    """
+    if current_depth >= max_depth:
         return _get_random_operand()
 
     op_str, op_func = random.choice(OPERATORS)
@@ -30,7 +31,7 @@ def _build_expression(
     left = _build_expression(current_depth + 1, max_depth)
     right = _build_expression(current_depth + 1, max_depth)
 
-   
+    # Avoid division by zero
     if op_str == "/":
         right_val = _evaluate_expression(right)
         retries = 0
@@ -41,14 +42,14 @@ def _build_expression(
         if retries >= 100:
             op_str, op_func = ("*", operator.mul)
 
+    return (left, op_func, right)
+
 
 def _format_expression_str(expression: Union[int, tuple]) -> str:
-
-    # Base case: It's just a number
+    """Format the expression tree as a string with parentheses."""
     if isinstance(expression, int):
         return str(expression)
 
-    # Recursive step: Format the (left, op, right) tuple
     left, op_func, right = expression
     
     # Find the string for the operator function
@@ -61,12 +62,10 @@ def _format_expression_str(expression: Union[int, tuple]) -> str:
 
 
 def _evaluate_expression(expression: Union[int, tuple]) -> float:
-
-    # Base case: It's just a number
+    """Recursively evaluate the expression tree."""
     if isinstance(expression, int):
         return float(expression)
 
-    # Recursive step: Evaluate the (left, op, right) tuple
     left, op_func, right = expression
 
     left_val = _evaluate_expression(left)
@@ -75,22 +74,21 @@ def _evaluate_expression(expression: Union[int, tuple]) -> float:
     return op_func(left_val, right_val)
 
 
-# --- Public API Function ---
-
 def generate_problem(depth: int) -> Tuple[str, float]:
-   
+    """
+    Generate a problem at the specified depth level.
+    
+    Depth interpretation:
+    - Depth 0: Single operation like (2 + 3)
+    - Depth 1: Nested once like ((2 + 3) * 4)
+    - Depth 2: Nested twice like (((2 + 3) * 4) / 2)
+    - And so on...
+    """
     if depth < 0:
         raise ValueError("Depth cannot be negative")
 
-    if depth == 0:
-        a = _get_random_operand()
-        b = _get_random_operand()
-        op_str, op_func = random.choice([("+", operator.add), ("*", operator.mul)])
-        result = op_func(a, b)
-        return f"({a} {op_str} {b})", float(result)
-
-    # Our recursive builder considers depth 1 to have 1 operation.
-    expr_tuple = _build_expression(current_depth=1, max_depth=depth)
+    # Build expression tree starting from depth 0 up to the target depth
+    expr_tuple = _build_expression(current_depth=0, max_depth=depth)
 
     problem_str = _format_expression_str(expr_tuple)
     correct_answer = _evaluate_expression(expr_tuple)
@@ -102,14 +100,14 @@ def generate_problem(depth: int) -> Tuple[str, float]:
     return problem_str, correct_answer
 
 
-# --- Self-Test Block ---
-
 if __name__ == "__main__":
+    print("--- Problem Generator Self-Test ---\n")
     
-    print("--- Problem Generator Self-Test ---")
+    for d in range(6):
+        print(f"Depth {d} examples:")
+        for i in range(3):
+            problem, answer = generate_problem(d)
+            print(f"  {i+1}. {problem} = {answer}")
+        print()
     
-    for d in range(5):
-        problem, answer = generate_problem(d)
-        print(f"Depth {d}: {problem} (Answer: {answer})")
-    
-    print("\n--- Test Complete ---")
+    print("--- Test Complete ---")

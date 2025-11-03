@@ -10,7 +10,7 @@ from src.monitoring.logger import get_logger # Import the function
 logger = get_logger() # Get the logger instance
 
 
-MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct" 
+MODEL_NAME = "meta-llama/Meta-Llama-3-70B-Instruct" 
 API_URL = "https://router.huggingface.co/v1/chat/completions"
 
 load_dotenv()
@@ -36,11 +36,11 @@ def query_model(prompt: str) -> Optional[Dict[str, Any]]:
             },
             {
                 "role": "user",
-                "content": f"Calculate: {prompt}\n\nShow your work, then state: Answer: [number]"
+                "content": f"Calculate: {prompt}\n\nShow key steps briefly, then provide your answer as, FINAL_ANSWER: <number>. Be concise."
             }
         ],
         "temperature": 0.0,  
-        "max_tokens": 512    
+        "max_tokens": 1000   
     }
 
     try:
