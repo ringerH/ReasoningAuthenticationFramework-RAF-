@@ -98,7 +98,7 @@ def main():
         return # Exit if tracker fails
 
     # Step 1: Load (pass directory now)
-    benchmark = load_benchmark(BENCHMARK_DIR) # Pass the directory to search
+    benchmark = load_benchmark(BENCHMARK_DIR) 
     if not benchmark:
         logger.error("Benchmark loading failed. Exiting.")
         return
@@ -125,7 +125,7 @@ def main():
         # Report for all levels present in the calculation range
         all_levels = sorted(accuracies.keys())
         if all_levels:
-            min_l, max_l = min(all_levels), max_all_levels
+            min_l, max_l = min(all_levels), max(all_levels)
             for level in range(min_l, max_l + 1):
                  acc = accuracies.get(level, 0.0) # Get accuracy or default to 0.0 if missing
                  logger.info(f"  Level {level}: {acc*100:.2f}%")

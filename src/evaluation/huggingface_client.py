@@ -31,12 +31,16 @@ def query_model(prompt: str) -> Optional[Dict[str, Any]]:
         "model": MODEL_NAME,
         "messages": [
             {
+                "role": "system",
+                "content": "You are a calculator. Always end your response with 'Answer: X' where X is the numeric result."
+            },
+            {
                 "role": "user",
-                "content": prompt
+                "content": f"Calculate: {prompt}\n\nShow your work, then state: Answer: [number]"
             }
         ],
-        "temperature": 0.1,
-        "max_tokens": 100
+        "temperature": 0.0,  
+        "max_tokens": 512    
     }
 
     try:

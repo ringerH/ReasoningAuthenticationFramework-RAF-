@@ -52,7 +52,7 @@ def run_evaluation(
         raw_text_response = "N/A" # Default if API fails or format error
 
         # --- Step 2a: Call API ---
-        prompt = f"What is {problem_str}?"
+        prompt = problem_str
         response_json = query_model(prompt)
 
         if response_json is None:

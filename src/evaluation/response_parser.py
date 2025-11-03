@@ -2,26 +2,27 @@ import re
 from typing import Optional
 
 def parse_response(raw_text: str) -> Optional[float]:
-   
     if not raw_text:
         return None
-
-    # Regex to find all integers or floats, including negatives.
-    # e.g., "6.67", "-10.5", "20"
-    number_regex = re.compile(r"[-+]?\d*\.\d+|[-+]?\d+")
     
-    matches = number_regex.findall(raw_text)
+    # Priority 1: "Answer: X" pattern
+    match = re.search(r"Answer:\s*([-+]?\d*\.?\d+)", raw_text, re.IGNORECASE)
+    if match:
+        return float(match.group(1))
+    
+    # Priority 2: Last "= X" at end of line
+    match = re.search(r"=\s*([-+]?\d*\.?\d+)\s*$", raw_text, re.MULTILINE)
+    if match:
+        return float(match.group(1))
+    
+    # Priority 3: Last number (fallback)
+    numbers = re.findall(r"[-+]?\d*\.?\d+", raw_text)
+    if numbers:
+        return float(numbers[-1])
+    
+    return None
 
-    if not matches:
-        return None
 
-    # Return the last number found, converted to a float.
-    try:
-        return float(matches[-1])
-    except (ValueError, IndexError):
-        return None
-
-# --- Self-Test Block ---
 if __name__ == "__main__":
    
     

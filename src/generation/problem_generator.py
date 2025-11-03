@@ -33,13 +33,13 @@ def _build_expression(
    
     if op_str == "/":
         right_val = _evaluate_expression(right)
-        
-        # If it's zero, regenerate the right branch until it's not.
-        while abs(right_val) < 1e-9: # Check if close to zero
+        retries = 0
+        while abs(right_val) < 1e-9 and retries < 100:
             right = _build_expression(current_depth + 1, max_depth)
             right_val = _evaluate_expression(right)
-
-    return (left, op_func, right)
+            retries += 1
+        if retries >= 100:
+            op_str, op_func = ("*", operator.mul)
 
 
 def _format_expression_str(expression: Union[int, tuple]) -> str:
@@ -83,9 +83,11 @@ def generate_problem(depth: int) -> Tuple[str, float]:
         raise ValueError("Depth cannot be negative")
 
     if depth == 0:
-        # Special case: depth 0 is just a number
-        operand = _get_random_operand()
-        return str(operand), float(operand)
+        a = _get_random_operand()
+        b = _get_random_operand()
+        op_str, op_func = random.choice([("+", operator.add), ("*", operator.mul)])
+        result = op_func(a, b)
+        return f"({a} {op_str} {b})", float(result)
 
     # Our recursive builder considers depth 1 to have 1 operation.
     expr_tuple = _build_expression(current_depth=1, max_depth=depth)
