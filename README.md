@@ -14,12 +14,13 @@ The benchmark generates arithmetic problems with increasing nested complexity (L
 ## System Design
 
 ### Architecture
-![System Architecture](sys_design/sys_arch.png)
+<img src="sys_design/sys_arc.png" alt="System Architecture" width="65%">
+
 
 The pipeline generates stratified problems, queries the model via API, parses responses, and calculates the Compositional Decay Score (CDS).
 
 ### Sequence Flow
-<img src="sys_design/seq_d.png" alt="Sequence Diagram" width="65%">
+<img src="sys_design/seqd.png" alt="Sequence Diagram" width="65%">
 
 End-to-end flow from benchmark generation through evaluation and analysis.
 
