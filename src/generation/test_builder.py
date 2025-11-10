@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import argparse  # <--- 1. IMPORT
 from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -11,21 +12,21 @@ from src.generation.problem_generator import generate_problem
 logger = get_logger()
 
 MIN_DEPTH = 0
-MAX_DEPTH = 5
-PROBLEMS_PER_DEPTH =20
+# <--- 2. REMOVED HARDCODED MAX_DEPTH AND PROBLEMS_PER_DEPTH
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data", "test_sets")
 
-run_timestamp = get_run_timestamp()
-if run_timestamp is None:
-    logger.warning("Could not get timestamp from logger, generating a fallback.")
-    run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+# 3. MODIFY FUNCTION TO ACCEPT ARGUMENTS
+def build_test_set(max_depth: int, problems_per_depth: int):
+    
+    run_timestamp = get_run_timestamp()
+    if run_timestamp is None:
+        logger.warning("Could not get timestamp from logger, generating a fallback.")
+        run_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-OUTPUT_FILE = os.path.join(OUTPUT_DIR, f"stratified_benchmark_{run_timestamp}.jsonl")
+    OUTPUT_FILE = os.path.join(OUTPUT_DIR, f"stratified_benchmark_{run_timestamp}.jsonl")
 
-
-def build_test_set():
     logger.info("--- [Test Set Builder Started] ---")
     logger.info(f"Project root: {PROJECT_ROOT}")
     logger.info(f"Output directory: {OUTPUT_DIR}")
@@ -38,16 +39,19 @@ def build_test_set():
         return
 
     logger.info(f"Generating test set at: {OUTPUT_FILE}")
-    logger.info(f"Params: Levels {MIN_DEPTH}-{MAX_DEPTH}, {PROBLEMS_PER_DEPTH} problems per level.")
+    # 4. USE THE ARGUMENTS HERE
+    logger.info(f"Params: Levels {MIN_DEPTH}-{max_depth}, {problems_per_depth} problems per level.")
 
     total_problems = 0
     try:
         with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-            for depth in range(MIN_DEPTH, MAX_DEPTH + 1):
+            # 4. USE THE ARGUMENTS HERE
+            for depth in range(MIN_DEPTH, max_depth + 1):
                 logger.info(f"Generating problems for level {depth}...")
 
                 generated_count = 0
-                while generated_count < PROBLEMS_PER_DEPTH:
+                # 4. USE THE ARGUMENTS HERE
+                while generated_count < problems_per_depth:
                     try:
                         # Generate a single problem
                         problem_str, correct_answer = generate_problem(depth)
@@ -92,6 +96,25 @@ def build_test_set():
     
     logger.info("--- [Build Complete] ---")
 
-
+# 5. ADD MAIN BLOCK TO PARSE ARGUMENTS
 if __name__ == "__main__":
-    build_test_set()
+    parser = argparse.ArgumentParser(description="Generate a stratified benchmark test set.")
+    
+    parser.add_argument(
+        '-d', '--max-depth',
+        type=int,
+        default=5,
+        help='Maximum nesting depth for problems (default: 5)'
+    )
+    
+    parser.add_argument(
+        '-n', '--num-problems',
+        type=int,
+        default=5,
+        help='Number of problems to generate per depth level (default: 5)'
+    )
+    
+    args = parser.parse_args()
+
+    # Call the builder function with the parsed arguments
+    build_test_set(max_depth=args.max_depth, problems_per_depth=args.num_problems)

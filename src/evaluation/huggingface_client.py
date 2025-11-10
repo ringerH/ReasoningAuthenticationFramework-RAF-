@@ -10,7 +10,7 @@ from src.monitoring.logger import get_logger # Import the function
 logger = get_logger() # Get the logger instance
 
 
-MODEL_NAME = "meta-llama/Meta-Llama-3-70B-Instruct" 
+MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct" 
 API_URL = "https://router.huggingface.co/v1/chat/completions"
 
 load_dotenv()
@@ -32,11 +32,11 @@ def query_model(prompt: str) -> Optional[Dict[str, Any]]:
         "messages": [
             {
                 "role": "system",
-                "content": "You are a calculator. Always end your response with 'Answer: X' where X is the numeric result."
+                "content": "You are a calculator. You must provide your final answer in the format FINAL_ANSWER: <number>."
             },
             {
                 "role": "user",
-                "content": f"Calculate: {prompt}\n\nShow key steps briefly, then provide your answer as, FINAL_ANSWER: <number>. Be concise."
+                "content": f"Calculate: {prompt}\n\nShow key steps briefly. Your final answer must be a single decimal number. Do not use fractions in the final answer line. Provide your answer as, FINAL_ANSWER: <number>."
             }
         ],
         "temperature": 0.0,  

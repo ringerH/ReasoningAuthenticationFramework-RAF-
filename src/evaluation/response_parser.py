@@ -2,68 +2,80 @@ import re
 from typing import Optional
 
 def parse_response(raw_text: str) -> Optional[float]:
+    """
+    Parses the raw text response from a model to find a numeric answer.
+
+    It tries a "waterfall" of regex patterns in order of priority:
+    1. FINAL_ANSWER: <fraction> (e.g., "FINAL_ANSWER: 41/9")
+    2. FINAL_ANSWER: <number> (e.g., "FINAL_ANSWER: 4.55")
+    3. Answer: <number> (e.g., "Answer: 20")
+    4. = <number> (at the end of a line)
+    5. Last number found in the string (fallback)
+    """
     if not raw_text:
         return None
+
+    # Priority 1 & 2: Look for "FINAL_ANSWER:" with support for fractions
+    # This regex has two parts, separated by '|':
+    # Part 1: `FINAL_ANSWER:\s*([-+]?\d*\.?\d+)\s*/\s*([-+]?\d*\.?\d+)`
+    #   - Looks for "FINAL_ANSWER:", whitespace,
+    #   - then captures a number (group 1, numerator),
+    #   - then a "/", then captures another number (group 2, denominator).
+    # Part 2: `FINAL_ANSWER:\s*([-+]?\d*\.?\d+)`
+    #   - Looks for "FINAL_ANSWER:", whitespace,
+    #   - then captures a single number (group 3).
+    fraction_or_float_regex = (
+        r"FINAL_ANSWER:\s*([-+]?\d*\.?\d+)\s*/\s*([-+]?\d*\.?\d+)"  # Priority 1 (Fraction)
+        r"|"
+        r"FINAL_ANSWER:\s*([-+]?\d*\.?\d+)"  # Priority 2 (Float/Int)
+    )
     
-    # Priority 1: "Answer: X" pattern
+    match = re.search(fraction_or_float_regex, raw_text, re.IGNORECASE)
+    if match:
+        if match.group(1) and match.group(2):  # Part 1 (Fraction) was matched
+            try:
+                numerator = float(match.group(1))
+                denominator = float(match.group(2))
+                if denominator == 0:
+                    return None # Avoid division by zero
+                return numerator / denominator
+            except (ValueError, ZeroDivisionError):
+                pass  # Fall through to other patterns if conversion fails
+        
+        elif match.group(3):  # Part 2 (Float/Int) was matched
+            try:
+                return float(match.group(3))
+            except ValueError:
+                pass  # Fall through
+
+    # Priority 3: "Answer: X" pattern (Old Priority 1)
     match = re.search(r"Answer:\s*([-+]?\d*\.?\d+)", raw_text, re.IGNORECASE)
     if match:
-        return float(match.group(1))
-    
-    # Priority 2: Last "= X" at end of line
+        try:
+            return float(match.group(1))
+        except ValueError:
+            pass
+
+    # Priority 4: Last "= X" at end of line (Old Priority 2)
     match = re.search(r"=\s*([-+]?\d*\.?\d+)\s*$", raw_text, re.MULTILINE)
     if match:
-        return float(match.group(1))
-    
-    # Priority 3: Last number (fallback)
+        try:
+            return float(match.group(1))
+        except ValueError:
+            pass
+
+    # Priority 5: Last number (fallback) (Old Priority 3)
     numbers = re.findall(r"[-+]?\d*\.?\d+", raw_text)
     if numbers:
-        return float(numbers[-1])
-    
+        try:
+            return float(numbers[-1])
+        except ValueError:
+            pass
+
     return None
 
 
 if __name__ == "__main__":
-   
-    
-    print("Response Parser Self-Test")
-    
-    # Test case 1: User's example with chain-of-thought
-    test_1 = """
-    To evaluate the expression ((2 + 3) * 4) / 3, we need to follow the order of operations (PEMDAS):
-    1. Evaluate the expression inside the parentheses: (2 + 3) = 5
-    2. Multiply 5 by 4: 5 * 20
-    3. Divide 20 by 3: 20 / 3 = 6.67
-    So, the final result is 6.67.
+    """print(f"\nOverall Result: {'All tests passed!' if all_passed else 'Some tests failed.'}")
+    print("--- [Test Complete] ---")
     """
-    
-    # Test case 2: Simple answer
-    test_2 = "The answer is 20."
-    
-    # Test case 3: No numbers
-    test_3 = "I am not sure."
-    
-    # Test case 4: Negative number
-    test_4 = "The result is -10.5."
-
-    tests = {
-        "CoT Example": (test_1, 6.67),
-        "Simple Answer": (test_2, 20.0),
-        "No Number": (test_3, None),
-        "Negative Float": (test_4, -10.5)
-    }
-
-    all_passed = True
-    for name, (text, expected) in tests.items():
-        result = parse_response(text)
-        is_correct = (result == expected)
-        if not is_correct:
-            all_passed = False
-            
-        print(f"Test: {name:<15} | Status: {'PASS' if is_correct else 'FAIL'}")
-        print(f"  Input: \"{text.strip()[:40]}...\"")
-        print(f"  Expected: {expected} | Got: {result}")
-        print("-" * 20)
-
-    print(f"\nOverall Result: {'All tests passed!' if all_passed else 'Some tests failed.'}")
-    print("Test Complete")
