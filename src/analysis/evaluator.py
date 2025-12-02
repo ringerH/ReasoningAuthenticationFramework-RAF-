@@ -4,13 +4,12 @@ import sys
 import time
 from typing import List, Dict, Any, Optional
 
-# --- Path Fix ---
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-# --- End Path Fix ---
 
 from src.monitoring.logger import get_logger
 from src.monitoring.tracker import ResultTracker
-from src.evaluation.huggingface_client import query_model
+from src.evaluation.groq_client import query_model
+#from src.evaluation.huggingface_client import query_model
 from src.evaluation.response_parser import parse_response
 
 def run_evaluation(
@@ -34,7 +33,7 @@ def run_evaluation(
             logger.warning(f"Skipping invalid problem entry at index {i}: Missing required keys. Data: {problem}")
             continue
 
-        level = problem['level']
+        level = problem['level'] # Represents Complexity (Ops) now
         problem_str = problem['problem']
         ground_truth = problem['answer']
 
@@ -44,7 +43,7 @@ def run_evaluation(
              continue
 
 
-        logger.info(f"Running problem {i+1}/{len(benchmark)} (Level {level})...")
+        logger.info(f"Running problem {i+1}/{len(benchmark)} (Complexity: {level} Ops)...")
 
         # --- Set defaults for logging ---
         model_answer = None

@@ -73,6 +73,57 @@ def _evaluate_expression(expression: Union[int, tuple]) -> float:
 
     return op_func(left_val, right_val)
 
+def generate_problem_by_ops(target_ops: int) -> Tuple[str, float]:
+    """
+    Generates a problem with EXACTLY `target_ops` operations.
+    This allows for linear complexity scaling (e.g., 10, 11, 12 ops).
+    """
+    if target_ops < 0:
+        raise ValueError("Target operations must be >= 0")
+    if target_ops == 0:
+        val = _get_random_operand()
+        return str(val), float(val)
+
+    # Recursive helper to build a tree with exactly n operators
+    def _build_n_op_tree(n):
+        if n == 0:
+            return _get_random_operand()
+        
+        # We use 1 op for the current node. 
+        # Remaining (n-1) ops are split randomly between left and right children.
+        remaining = n - 1
+        left_ops = random.randint(0, remaining)
+        right_ops = remaining - left_ops
+        
+        op_str, op_func = random.choice(OPERATORS)
+        
+        left_expr = _build_n_op_tree(left_ops)
+        right_expr = _build_n_op_tree(right_ops)
+        
+        # Avoid division by zero / tiny numbers
+        if op_str == "/":
+            right_val = _evaluate_expression(right_expr)
+            retries = 0
+            while abs(right_val) < 1e-9 and retries < 20:
+                # Regenerate right branch
+                right_expr = _build_n_op_tree(right_ops)
+                right_val = _evaluate_expression(right_expr)
+                retries += 1
+            if retries >= 20:
+                op_str, op_func = ("*", operator.mul)
+        
+        return (left_expr, op_func, right_expr)
+
+    expr_tree = _build_n_op_tree(target_ops)
+    
+    problem_str = _format_expression_str(expr_tree)
+    correct_answer = _evaluate_expression(expr_tree)
+    
+    # Format answer
+    if not correct_answer.is_integer():
+        correct_answer = round(correct_answer, 4)
+
+    return problem_str, correct_answer
 
 def generate_problem(depth: int) -> Tuple[str, float]:
     """

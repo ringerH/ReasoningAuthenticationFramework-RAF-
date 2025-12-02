@@ -10,7 +10,7 @@ from src.monitoring.logger import get_logger # Import the function
 logger = get_logger() # Get the logger instance
 
 
-MODEL_NAME = "meta-llama/Llama-3.1-8B-Instruct" 
+MODEL_NAME = "Qwen/Qwen3-32B:groq" 
 API_URL = "https://router.huggingface.co/v1/chat/completions"
 
 load_dotenv()

@@ -1,2 +1,7 @@
 requests
 python-dotenv
+streamlit
+plotly
+pandas
+numpy
+scikit-learn
