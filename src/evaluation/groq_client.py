@@ -1,4 +1,4 @@
-import os
+"""import os
 import time
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -11,15 +11,15 @@ from src.monitoring.logger import get_logger
 logger = get_logger()
 
 BASE_URL = "https://api.groq.com/openai/v1"
-MODEL_NAME = "openai/gpt-oss-120b" 
+MODEL_NAME = "openai/gpt-oss-20b" 
 
 load_dotenv()
 
 def query_model(prompt: str) -> Optional[Dict[str, Any]]:
-    """
+    
     Queries the model using the OpenAI client pointing to Groq.
     Returns a dict structure compatible with the existing evaluator.
-    """
+    
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         logger.error("GROQ_API_KEY not found in environment variables.")
@@ -83,4 +83,56 @@ if __name__ == "__main__":
     test_q = "((2+2)*5)/4"
     print(f"Testing with query: {test_q}")
     result = query_model(test_q)
-    print("Result:", result)
+    print("Result:", result)"""
+    
+import os
+import time
+from openai import OpenAI
+from dotenv import load_dotenv
+from typing import List, Dict, Optional
+import sys
+
+# Load env vars
+load_dotenv()
+
+# --- MODEL SELECTION ---
+# Dev/Debug: "llama-3.1-8b-instant" (Fast, High Limits)
+# Production: "llama-3.3-70b-versatile" (Smart, Low Limits)
+MODEL_NAME = "llama-3.3-70b-versatile" 
+
+client = OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    api_key=os.getenv("GROQ_API_KEY"),
+)
+
+def query_agent(messages: List[Dict[str, str]]) -> Optional[str]:
+    """
+    Stateful query for Multi-Turn ICCR loop.
+    Args:
+        messages: Full conversation history [{"role": "...", "content": "..."}]
+    """
+    if not os.getenv("GROQ_API_KEY"):
+        print("❌ ERROR: GROQ_API_KEY not found in .env")
+        return None
+
+    try:
+        completion = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=messages,
+            temperature=0.0, # Deterministic behavior
+            max_tokens=1024,
+            # CRITICAL: Stop tokens prevent the model from hallucinating the tool output
+            stop=["OBSERVATION:", "Observation:"] 
+        )
+        return completion.choices[0].message.content.strip()
+
+    except Exception as e:
+        # Handle Rate Limits (429) Gracefully
+        error_str = str(e)
+        if "429" in error_str:
+            print(f"⚠️ Rate Limit Hit (429). Sleeping for 60s...")
+            time.sleep(60)
+            return query_agent(messages) # Retry recursively
+            
+        print(f"❌ API Error: {e}")
+        return None

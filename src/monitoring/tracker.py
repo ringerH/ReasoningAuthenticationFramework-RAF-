@@ -15,8 +15,7 @@ except ImportError:
 
 
 class ResultTracker:
-  
-    
+     
     def __init__(self, filepath: str):
        
         self.filepath = filepath

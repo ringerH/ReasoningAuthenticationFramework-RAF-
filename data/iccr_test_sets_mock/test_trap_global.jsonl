@@ -1,0 +1,5 @@
+{"id": "trap_3948", "problem_type": "type_a_trap", "expression_hidden": "(63 + 2) * 0", "structure_masked": "( ? + ? ) * ?", "operands": [63, 2, 0], "ground_truth": 0, "irrelevant_indices": [0, 1], "critical_indices": [2]}
+{"id": "trap_5026", "problem_type": "type_a_trap", "expression_hidden": "(26 + 38) * 0", "structure_masked": "( ? + ? ) * ?", "operands": [26, 38, 0], "ground_truth": 0, "irrelevant_indices": [0, 1], "critical_indices": [2]}
+{"id": "trap_1681", "problem_type": "type_a_trap", "expression_hidden": "(49 + 24) * 0", "structure_masked": "( ? + ? ) * ?", "operands": [49, 24, 0], "ground_truth": 0, "irrelevant_indices": [0, 1], "critical_indices": [2]}
+{"id": "trap_1069", "problem_type": "type_a_trap", "expression_hidden": "(22 + 95) * 0", "structure_masked": "( ? + ? ) * ?", "operands": [22, 95, 0], "ground_truth": 0, "irrelevant_indices": [0, 1], "critical_indices": [2]}
+{"id": "trap_8447", "problem_type": "type_a_trap", "expression_hidden": "(12 + 67) * 0", "structure_masked": "( ? + ? ) * ?", "operands": [12, 67, 0], "ground_truth": 0, "irrelevant_indices": [0, 1], "critical_indices": [2]}

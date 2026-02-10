@@ -1,0 +1,5 @@
+{"id": "ctrl_2943", "problem_type": "type_c_control", "expression_hidden": "10 + 40", "structure_masked": "? + ?", "operands": [10, 40], "ground_truth": 50, "irrelevant_indices": [], "critical_indices": [0, 1]}
+{"id": "ctrl_9004", "problem_type": "type_c_control", "expression_hidden": "19 + 12", "structure_masked": "? + ?", "operands": [19, 12], "ground_truth": 31, "irrelevant_indices": [], "critical_indices": [0, 1]}
+{"id": "ctrl_8117", "problem_type": "type_c_control", "expression_hidden": "4 + 10", "structure_masked": "? + ?", "operands": [4, 10], "ground_truth": 14, "irrelevant_indices": [], "critical_indices": [0, 1]}
+{"id": "ctrl_8296", "problem_type": "type_c_control", "expression_hidden": "36 + 37", "structure_masked": "? + ?", "operands": [36, 37], "ground_truth": 73, "irrelevant_indices": [], "critical_indices": [0, 1]}
+{"id": "ctrl_9401", "problem_type": "type_c_control", "expression_hidden": "30 + 15", "structure_masked": "? + ?", "operands": [30, 15], "ground_truth": 45, "irrelevant_indices": [], "critical_indices": [0, 1]}

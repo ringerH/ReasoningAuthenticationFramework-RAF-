@@ -11,12 +11,22 @@ RESULTS_DIR = os.path.join(PROJECT_ROOT, "data", "results")
 TOLERANCE = 0.01
 SLEEP_TIME = 2
 
-# --- (Optional but Recommended) ---
-# You can also move hardcoded params from other files here:
-# From problem_generator.py
 OPERAND_MIN = 1
 OPERAND_MAX = 10
 
-# From test_builder.py
-MIN_DEPTH = 0
-# (MAX_DEPTH and PROBLEMS_PER_DEPTH are now args, so no longer needed here)
+ICCR_DATA_DIR = os.path.join(PROJECT_ROOT, "data", "iccr_test_sets")
+
+ICCR_CONFIG = {
+    "BENCHMARK_SIZE":100,
+    # 10 queries is tight but forces efficiency. 
+    # Max usage = 10 API calls + 1 Final Answer call.
+    "BUDGET_TOTAL": 10,       
+    
+    # Weighting: 70% Leakage Penalty, 30% Efficiency Penalty
+    "DMS_ALPHA": 0.7,         
+    
+    # Rate Limit Protection: 
+    # Groq Free Tier is ~30 requests/min. 
+    # 2.5s sleep ensures we stay safe (approx 24 RPM).
+    "SLEEP_BETWEEN_TURNS": 4.5 
+}

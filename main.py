@@ -6,18 +6,16 @@ from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-# --- 1. Import from new modules ---
+
 from src.config import RESULTS_DIR, TOLERANCE, SLEEP_TIME
 from src.utils import load_benchmark
 from src.analysis.reporting import log_final_report
 
-# --- 2. Standard imports ---
 from src.monitoring.logger import setup_logger, get_logger
 from src.monitoring.tracker import ResultTracker
 from src.analysis.evaluator import run_evaluation
 from src.analysis.calculator import calculate_accuracies, calculate_cds
 
-# --- 3. load_benchmark() function is GONE ---
 
 def main():
     """
