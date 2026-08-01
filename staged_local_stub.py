@@ -74,10 +74,24 @@ class LocalStagedDecodingStub:
     def _activate(self, adapter_name: str):
         if hasattr(self.model, "set_adapter"):
             self.model.set_adapter(adapter_name)
-            active = getattr(self.model, "active_adapter", None) or getattr(
-                self.model, "active_adapters", None
+
+            active = getattr(self.model, "active_adapter", None)
+            if callable(active):
+                active = active()  # some PEFT versions expose active_adapter as a method too
+
+            if active is None:
+                active_list = getattr(self.model, "active_adapters", None)
+                if callable(active_list):
+                    active_list = active_list()
+                active = active_list
+
+        # active may come back as a string, a list, or a list-of-one depending on version
+            matches = (
+                active == adapter_name
+                or active == [adapter_name]
+                or (isinstance(active, (list, tuple)) and adapter_name in active)
             )
-            if active != adapter_name and active != [adapter_name]:
+            if not matches:
                 raise RuntimeError(
                     f"Expected active adapter '{adapter_name}', got '{active}'."
                 )
