@@ -12,7 +12,6 @@ logs/
 
 # Raw output data (can be large/numerous)
 data/results/
-data/test_sets/
 
 # IDE specific files (optional, but good practice)
 .vscode/
