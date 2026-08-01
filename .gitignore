@@ -17,3 +17,5 @@ data/test_sets/
 # IDE specific files (optional, but good practice)
 .vscode/
 .idea/
+
+main_solution_staged_dec.py
